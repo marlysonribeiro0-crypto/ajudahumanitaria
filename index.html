@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Ajuda Humanitária | Gestão de Cadastro</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -21,11 +23,12 @@
 }
 * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 body {
-  background-color: #f0f2f5;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: #f3f5f8;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   overflow-x: hidden;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 .bg-primary { background: linear-gradient(135deg, #0a5077 0%, #073a57 100%); }
 .text-primary { color: #0a5077; }
@@ -41,10 +44,11 @@ body {
   overflow-y: auto;
 }
 .sidebar.active { transform: translateX(0); }
-.logo-container { background: white; padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; }
-.logo-img { max-height: 50px; width: auto; object-fit: contain; }
-.logo-text { font-size: 1.2rem; font-weight: 900; color: #0a5077; line-height: 1.2; }
-.logo-sub { font-size: 0.6rem; color: #666; font-weight: 600; letter-spacing: 0.5px; }
+.logo-container { background: white; padding: 1.1rem 1rem 0.9rem; border-bottom: 1px solid rgba(0,0,0,0.08); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
+.logo-img { max-height: 46px; width: auto; object-fit: contain; margin-bottom: 2px; }
+.logo-brand { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 100%; }
+.logo-text { font-size: 1rem; font-weight: 800; color: #0a5077; line-height: 1.2; max-width: 100%; word-break: break-word; }
+.logo-sub { font-size: 0.6rem; color: #667085; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 1px; }
 .active-tab { background-color: rgba(255,255,255,0.15); border-right: 4px solid var(--gold); }
 .fade-in { animation: fadeIn 0.25s ease; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
@@ -102,7 +106,7 @@ select.input-field { appearance: auto; }
 .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
 .table-responsive::-webkit-scrollbar-thumb { background: #bbb; border-radius: 3px; }
 .login-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: linear-gradient(135deg, #0a5077 0%, #073a57 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-.login-box { background: white; border-radius: 16px; padding: 40px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.login-box { background: white; border-radius: 16px; padding: 40px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border-top: 4px solid var(--gold); }
 .login-box h1 { font-size: 28px; font-weight: 900; color: #0a5077; text-align: center; }
 .login-box .sub { text-align: center; color: #666; font-size: 14px; margin-bottom: 24px; }
 .login-box .logo-login { display: block; margin: 0 auto 12px; max-height: 70px; }
@@ -152,15 +156,21 @@ select.input-field { appearance: auto; }
 <div class="login-overlay" id="loginScreen">
   <div class="login-box">
     <img src="logo.png" alt="Prefeitura" class="logo-login" onerror="this.style.display='none'">
-    <div style="text-align:center;font-size:48px;margin-bottom:4px;">🏛️</div>
+    <div style="text-align:center;font-size:38px;margin-bottom:6px;color:#0a5077;"><i class="fas fa-landmark"></i></div>
     <h1>Ajuda Humanitária</h1>
     <p class="sub">Gestão de Cadastro e Entregas</p>
-    <form id="loginForm" onsubmit="return fazerLogin(event)">
-      <input type="text" id="loginUser" class="input-field" placeholder="Usuário" value="admin" required>
-      <input type="password" id="loginPass" class="input-field" placeholder="Senha" value="admin123" required>
-      <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:16px;">Entrar</button>
+    <form id="loginForm" onsubmit="return fazerLogin(event)" autocomplete="off">
+      <div class="mb-3">
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Usuário</label>
+        <input type="text" id="loginUser" class="input-field" placeholder="Usuário" autocomplete="username" required>
+      </div>
+      <div class="mb-1">
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Senha</label>
+        <input type="password" id="loginPass" class="input-field" placeholder="Senha" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:16px;margin-top:16px;">Entrar</button>
       <div class="text-center text-xs text-gray-400 mt-3">
-        <p><strong>admin</strong> / admin123 · <strong>operador</strong> / operador123</p>
+        <p>Primeiro acesso? Utilize o usuário <strong>admin</strong> com a senha padrão cadastrada pelo administrador do sistema.</p>
       </div>
     </form>
   </div>
@@ -176,7 +186,7 @@ select.input-field { appearance: auto; }
   <aside class="sidebar text-white" id="sidebar">
     <div class="logo-container">
       <img src="logo.png" alt="Prefeitura" class="logo-img" onerror="this.style.display='none'">
-      <div>
+      <div class="logo-brand">
         <div class="logo-text">Ajuda Humanitária</div>
         <div class="logo-sub">Gestão de Cadastro</div>
       </div>
@@ -229,7 +239,7 @@ select.input-field { appearance: auto; }
         <div><span class="block font-medium">Usuários</span><span class="text-xs text-white/70">Gerenciar</span></div>
       </button>
     </nav>
-    <div class="p-2 text-center text-xs text-white/40">v2.1.0 🏛️</div>
+    <div class="p-2 text-center text-xs text-white/40">v2.3.0</div>
   </aside>
 
   <!-- MAIN CONTENT -->
@@ -2109,7 +2119,7 @@ window.gerarTermoPDF = (entregaId, overrideData = null) => {
   doc.text(`Entregue por: ${e.entreguePor || '-'}  ·  Documento gerado automaticamente pelo sistema em ${new Date().toLocaleString('pt-BR')}`, 20, 285);
 
   doc.save(`termo-recebimento-${(nomeResp || 'familia').replace(/\s+/g, '-').toLowerCase()}-${e.data || ''}.pdf`);
-  showNotification('📄 Termo de recebimento gerado!', 'success');
+  showNotification('Termo de recebimento gerado!', 'success');
 };
 
 // ─── INTEGRAÇÃO: FICHA DE CADASTRO OFICIAL (mesma estrutura do formulário em papel) ─
@@ -2183,7 +2193,7 @@ window.gerarFichaFamiliaPDF = (familiaId) => {
   doc.text(`Documento gerado pelo sistema em ${new Date().toLocaleString('pt-BR')}`, 20, 285);
 
   doc.save(`ficha-cadastro-${(f.nome || 'familia').replace(/\s+/g, '-').toLowerCase()}.pdf`);
-  showNotification('📄 Ficha de cadastro gerada!', 'success');
+  showNotification('Ficha de cadastro gerada!', 'success');
 };
 
 window.gerarRelatorioFamilia = () => {
@@ -2199,7 +2209,7 @@ window.gerarRelatorioFamilia = () => {
   
   doc.setFontSize(16);
   doc.setTextColor(10, 80, 119);
-  doc.text('📋 Relatório da Família', 105, 20, null, null, 'center');
+  doc.text('Relatório da Família', 105, 20, null, null, 'center');
   
   doc.setFontSize(12);
   doc.setTextColor(0, 0, 0);
@@ -2209,7 +2219,7 @@ window.gerarRelatorioFamilia = () => {
   doc.text(`Telefone: ${familia?.telefone || '-'}`, 20, 56);
   doc.text(`Status: ${familia?.status || '-'}`, 20, 63);
   
-  doc.text(`👤 Membros (${membrosFam.length})`, 20, 73);
+  doc.text(`Membros (${membrosFam.length})`, 20, 73);
   let y = 80;
   membrosFam.forEach(m => {
     doc.text(`- ${m.nome} (${m.tipo})${m.cpf ? ` - CPF: ${m.cpf}` : ''}`, 25, y);
@@ -2218,7 +2228,7 @@ window.gerarRelatorioFamilia = () => {
   });
   
   y += 5;
-  doc.text(`📦 Histórico de Entregas (${entregasFam.length})`, 20, y);
+  doc.text(`Histórico de Entregas (${entregasFam.length})`, 20, y);
   y += 7;
   if (entregasFam.length === 0) {
     doc.text('- Nenhuma entrega registrada para esta família', 25, y);
@@ -2247,7 +2257,7 @@ window.gerarRelatorioPeriodo = () => {
   
   doc.setFontSize(16);
   doc.setTextColor(10, 80, 119);
-  doc.text('📊 Relatório por Período', 105, 20, null, null, 'center');
+  doc.text('Relatório por Período', 105, 20, null, null, 'center');
   
   doc.setFontSize(12);
   doc.setTextColor(0, 0, 0);
@@ -2255,7 +2265,7 @@ window.gerarRelatorioPeriodo = () => {
   doc.text(`Total de entregas: ${entregasFiltradas.length}`, 20, 42);
   
   const familiasUnicas = new Set(entregasFiltradas.map(e => e.familiaId)).size;
-  doc.text(`👨‍👩‍👧‍👦 Famílias atendidas: ${familiasUnicas}`, 20, 49);
+  doc.text(`Famílias atendidas: ${familiasUnicas}`, 20, 49);
   
   // Total por item
   const itensTotais = {};
@@ -2263,7 +2273,7 @@ window.gerarRelatorioPeriodo = () => {
     const key = e.itemNome || e.itemId;
     itensTotais[key] = (itensTotais[key] || 0) + (e.quantidade || 1);
   });
-  doc.text('📦 Resumo por item:', 20, 58);
+  doc.text('Resumo por item:', 20, 58);
   let y = 65;
   Object.entries(itensTotais).forEach(([nome, qtd]) => {
     doc.text(`- ${nome}: ${qtd} unidades`, 25, y);
@@ -2272,11 +2282,11 @@ window.gerarRelatorioPeriodo = () => {
   });
   
   y += 5;
-  doc.text('📋 Detalhes das entregas:', 20, y);
+  doc.text('Detalhes das entregas:', 20, y);
   y += 7;
   entregasFiltradas.slice(0, 25).forEach(e => {
     const familia = familias.find(f => f.id === e.familiaId);
-    doc.text(`- ${formatDate(e.data)}: ${familia?.nome || e.familiaNome || '-'} → ${e.itemNome || '-'} x${e.quantidade || 1}`, 25, y);
+    doc.text(`- ${formatDate(e.data)}: ${familia?.nome || e.familiaNome || '-'} -> ${e.itemNome || '-'} x${e.quantidade || 1}`, 25, y);
     y += 5;
     if (y > 270) { doc.addPage(); y = 20; }
   });
@@ -2572,11 +2582,13 @@ document.addEventListener('keydown', e => {
 criarUsuariosPadrao();
 hardenAutofill();
 
+// Preenche apenas o usuário padrão; a senha nunca vem pré-preenchida
+// por segurança — o administrador deve digitá-la e trocá-la após o
+// primeiro acesso.
 document.getElementById('loginUser').value = 'admin';
-document.getElementById('loginPass').value = 'admin123';
 
-console.log('🏛️ Ajuda Humanitária v2.2.0');
-console.log('📌 Sistema de Gestão de Cadastro e Entregas — com detecção de famílias parecidas e melhorias mobile');
+console.log('Ajuda Humanitária v2.3.0');
+console.log('Sistema de Gestão de Cadastro e Entregas — exportações em PDF revisadas, login e layout aprimorados');
 </script>
 </body>
 </html>
