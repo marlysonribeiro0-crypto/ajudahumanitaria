@@ -2,8 +2,15 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Ajuda Humanitária — Prefeitura de Trairão</title>
+<!--
+  ══════════════════════════════════════════════════════════════════════
+   AJUDA HUMANITÁRIA · PREFEITURA DE TRAIRÃO — v4.1.0 (FIREBASE)
+   "Compromisso com Trairão" · Secretaria de Assistência Social
+   Banco: Cloud Firestore (cestas-cras) · Login via banco (sem Auth)
+  ══════════════════════════════════════════════════════════════════════
+-->
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -48,6 +55,14 @@ body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;back
 .l-inp .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5}
 .l-inp input{width:100%;padding:10px 40px 10px 38px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;background:#f8fafc;transition:.15s}
 .l-inp input:focus{outline:none;border-color:#1d4ed8;background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.l-inp input:-webkit-autofill,
+.l-inp input:-webkit-autofill:hover,
+.l-inp input:-webkit-autofill:focus,
+.l-inp input:-webkit-autofill:active{
+  -webkit-box-shadow:0 0 0 30px #f8fafc inset !important;
+  -webkit-text-fill-color:#0f172a !important;
+  transition:background-color 9999s ease-in-out 0s;
+}
 .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;font-size:14px;padding:5px;border-radius:6px}
 .eye:hover{background:#dbeafe}
 
@@ -275,21 +290,21 @@ label{display:block;font-size:10.5px;font-weight:700;color:#475569;margin:8px 0 
     <div class="l-label">Selecione o usuário</div>
     <div class="user-chips" id="userChips"></div>
 
-    <form onsubmit="doLogin(event)" style="margin-top:12px">
+    <form onsubmit="doLogin(event)" style="margin-top:12px" autocomplete="off">
       <div class="l-inp">
         <span class="ic">👤</span>
-        <input id="loginUser" placeholder="Usuário" autocomplete="username" required>
+        <input id="loginUser" type="text" placeholder="Usuário" autocomplete="off" required>
       </div>
       <div class="l-inp">
         <span class="ic">🔒</span>
-        <input id="loginPass" type="password" placeholder="Senha" autocomplete="current-password" required>
+        <input id="loginPass" type="password" placeholder="Senha" autocomplete="new-password" required>
         <button type="button" class="eye" onclick="togglePass()" id="eyeBtn">👁</button>
       </div>
       <div id="loginErr" class="hidden"></div>
       <button class="btn btn-p w100" id="loginBtn" type="submit" style="font-size:13.5px;padding:11px">🔓 Entrar no Sistema</button>
     </form>
 
-    <div class="l-foot">© 2026 Prefeitura de Trairão · Secretaria de Assistência Social · v4.0.0</div>
+    <div class="l-foot">© 2026 Prefeitura de Trairão · Secretaria de Assistência Social · v4.1.0</div>
   </div>
 </div>
 
@@ -324,7 +339,7 @@ label{display:block;font-size:10.5px;font-weight:700;color:#475569;margin:8px 0 
       <a data-page="auditoria" data-need="audit" onclick="showPage('auditoria')"><span>🛡️</span>Auditoria</a>
       <a data-page="usuarios" data-need="users" onclick="showPage('usuarios')"><span>👥</span>Usuários</a>
     </nav>
-    <div class="side-foot">v4.0.0 · © 2026 Prefeitura de Trairão</div>
+    <div class="side-foot">v4.1.0 · © 2026 Prefeitura de Trairão</div>
   </aside>
 
   <div class="main">
@@ -366,6 +381,15 @@ label{display:block;font-size:10.5px;font-weight:700;color:#475569;margin:8px 0 
 /* ═════════════ FIREBASE SDK ═════════════ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, getDoc, getDocs, query, where, onSnapshot, runTransaction, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Impedir o botão voltar de sair do sistema
+window.addEventListener('popstate', function(e) {
+  if (document.getElementById('app') && !document.getElementById('app').classList.contains('hidden')) {
+    e.preventDefault();
+    showPage('dashboard');
+    history.pushState(null, '', window.location.href);
+  }
+});
 
 const firebaseConfig = {
   apiKey: "AIzaSyDrh8dCJQRI2cP8doalV0KgC26_t6099HI",
@@ -485,6 +509,8 @@ function enterApp(){
   $('#loginScreen').classList.add('hidden'); $('#app').classList.remove('hidden');
   $('#topUser').innerHTML='<span class="tu-av">'+esc(sess.nome[0])+'</span><span class="tu-info"><b>'+esc(sess.nome)+'</b><i>'+esc(sess.nivel)+'</i></span>';
   applyPerms(); subscribeAll(); showPage('dashboard'); toast('Bem-vindo(a), '+sess.nome+'!','ok');
+  // Adiciona estado no histórico para o botão voltar
+  history.pushState(null, '', window.location.href);
 }
 
 function unsubAll(){ unsubs.forEach(u=>{try{u()}catch(e){}}); unsubs=[]; }
@@ -511,7 +537,10 @@ function subscribeMeta(){
 const PAGES={dashboard:{t:'Dashboard',r:renderDashboard},familias:{t:'Famílias',r:renderFamilias},membros:{t:'Membros',r:renderMembros},itens:{t:'Itens / Estoque',r:renderItens},entregas:{t:'Entregas',r:renderEntregas},relatorios:{t:'Relatórios',r:renderRelatorios},auditoria:{t:'Auditoria',r:renderAuditoria},usuarios:{t:'Usuários',r:renderUsuarios}};
 function showPage(p){ if((p==='usuarios'&&!can('users'))||(p==='auditoria'&&!can('audit')))p='dashboard'; curPage=p;
   $$('.page').forEach(s=>s.classList.toggle('active',s.id==='page-'+p)); $$('.nav a').forEach(a=>a.classList.toggle('active',a.dataset.page===p));
-  $('#pageTitle').textContent=PAGES[p].t; PAGES[p].r(); closeSidebar(); }
+  $('#pageTitle').textContent=PAGES[p].t; PAGES[p].r(); closeSidebar(); 
+  // Adiciona estado no histórico para o botão voltar
+  history.pushState(null, '', window.location.href);
+}
 function toggleSidebar(){$('#sidebar').classList.toggle('open');$('#backdrop').classList.toggle('show')}
 function closeSidebar(){$('#sidebar').classList.remove('open');$('#backdrop').classList.remove('show')}
 
@@ -530,12 +559,9 @@ function printReport(title,sub,body){
   const w=window.open('','_blank'); 
   if(!w){toast('Permita pop-ups para gerar o PDF.','warn');return}
   
-  const BRASAO='<svg viewBox="0 0 96 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="bs"><path d="M48 6 86 16 86 62C86 90 68 107 48 114 28 107 10 90 10 62L10 16Z"/></clipPath></defs><g clip-path="url(#bs)"><rect width="96" height="66" fill="#cdeaf7"/><circle cx="48" cy="24" r="8" fill="#ffd54f"/><g stroke="#f9a825" stroke-width="2"><line x1="48" y1="8" x2="48" y2="14"/><line x1="34" y1="13" x2="39" y2="17"/><line x1="62" y1="13" x2="57" y2="17"/></g><ellipse cx="48" cy="60" rx="60" ry="18" fill="#43a047"/><g stroke="#1b5e20" stroke-width="2.4" fill="none" stroke-linecap="round"><path d="M28 46q-8-3-12 1M28 46q8-3 12 1M28 46v12"/><path d="M68 46q-8-3-12 1M68 46q8-3 12 1M68 46v12"/></g><rect width="96" y="64" height="56" fill="#29b6f6"/><rect x="12" y="62" width="72" height="6" fill="#8d6e63"/><g fill="#8d6e63"><rect x="22" y="68" width="4" height="12"/><rect x="46" y="68" width="4" height="12"/><rect x="70" y="68" width="4" height="12"/></g><g transform="translate(46 100) rotate(-18)"><ellipse rx="11" ry="4.5" fill="#cfd8dc"/><path d="M9 0l7-4v8z" fill="#cfd8dc"/></g></g><path d="M48 6 86 16 86 62C86 90 68 107 48 114 28 107 10 90 10 62L10 16Z" fill="none" stroke="#2e7d32" stroke-width="4"/></svg>';
-  
-  // Usar a logo real no PDF
   const logoHTML = '<img src="logo-trairao.png" style="height:50px;width:auto;margin-right:12px;background:#fff;padding:4px;border-radius:8px;" onerror="this.style.display=\'none\'">';
   
-  w.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Segoe UI,Arial,sans-serif;color:#111;font-size:12.5px;padding:28px}.head{display:flex;gap:14px;align-items:center;border-bottom:2.5px solid #1a1a4e;padding-bottom:12px;margin-bottom:14px}.head svg{width:46px;height:58px}.head h1{font-size:16px;color:#1a1a4e}.head p{font-size:11.5px;color:#555}h2{font-size:12.5px;color:#1a1a4e;margin:15px 0 6px;border-bottom:1px solid #ddd;padding-bottom:4px;text-transform:uppercase}table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid #cbd5e1;padding:5px 8px;text-align:left;font-size:11.5px}th{background:#eef2ff}.grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px;margin:8px 0}.grid>div{padding:3px 0;border-bottom:1px dotted #ccc}.grid i{font-style:normal;color:#666;font-size:10.5px;display:block}.span2{grid-column:span 2}.tot{background:#eef2ff;border:1px solid #c7d2fe;padding:8px 12px;border-radius:6px;margin-top:12px;font-weight:700;color:#1a1a4e}.sign{display:flex;gap:60px;margin-top:52px}.sign div{flex:1;border-top:1px solid #333;padding-top:6px;text-align:center;font-size:11px}.foot{margin-top:26px;font-size:10.5px;color:#777;border-top:1px solid #ddd;padding-top:8px;display:flex;justify-content:space-between}@media print{body{padding:10px}}</style></head><body><div class="head">'+logoHTML+'<div><h1>Prefeitura de Trairão — Ajuda Humanitária</h1><p>Compromisso com Trairão · '+esc(sub||'')+'</p></div></div><h2>'+esc(title)+'</h2>'+body+'<div class="foot"><span>Gerado em '+fmtDT(Date.now())+' por '+esc(sess?sess.nome:'—')+'</span><span>v4.0.0</span></div><scr'+'ipt>window.onload=function(){window.print()}<\/scr'+'ipt></body></html>');
+  w.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Segoe UI,Arial,sans-serif;color:#111;font-size:12.5px;padding:28px}.head{display:flex;gap:14px;align-items:center;border-bottom:2.5px solid #1a1a4e;padding-bottom:12px;margin-bottom:14px}.head svg{width:46px;height:58px}.head h1{font-size:16px;color:#1a1a4e}.head p{font-size:11.5px;color:#555}h2{font-size:12.5px;color:#1a1a4e;margin:15px 0 6px;border-bottom:1px solid #ddd;padding-bottom:4px;text-transform:uppercase}table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid #cbd5e1;padding:5px 8px;text-align:left;font-size:11.5px}th{background:#eef2ff}.grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px;margin:8px 0}.grid>div{padding:3px 0;border-bottom:1px dotted #ccc}.grid i{font-style:normal;color:#666;font-size:10.5px;display:block}.span2{grid-column:span 2}.tot{background:#eef2ff;border:1px solid #c7d2fe;padding:8px 12px;border-radius:6px;margin-top:12px;font-weight:700;color:#1a1a4e}.sign{display:flex;gap:60px;margin-top:52px}.sign div{flex:1;border-top:1px solid #333;padding-top:6px;text-align:center;font-size:11px}.foot{margin-top:26px;font-size:10.5px;color:#777;border-top:1px solid #ddd;padding-top:8px;display:flex;justify-content:space-between}@media print{body{padding:10px}}</style></head><body><div class="head">'+logoHTML+'<div><h1>Prefeitura de Trairão — Ajuda Humanitária</h1><p>Compromisso com Trairão · '+esc(sub||'')+'</p></div></div><h2>'+esc(title)+'</h2>'+body+'<div class="foot"><span>Gerado em '+fmtDT(Date.now())+' por '+esc(sess?sess.nome:'—')+'</span><span>v4.1.0</span></div><scr'+'ipt>window.onload=function(){window.print()}<\/scr'+'ipt></body></html>');
   w.document.close(); addLog('Exportou','PDF: '+title); }
 
 function repPorFamilia(){ const id=$('#repFamilia').value;if(!id)return toast('Selecione uma família.','warn');
@@ -651,7 +677,6 @@ async function saveFamilia(id){
       familiaId = docRef.id;
     }
     
-    // 🔥 CRIA O MEMBRO RESPONSÁVEL AUTOMATICAMENTE 🔥
     const membrosExistentes = dbp.membros.filter(m => sid(m.familiaId) === sid(familiaId) && m.tipo === 'Responsável');
     
     if(membrosExistentes.length === 0){
@@ -756,8 +781,10 @@ function itemForm(i){
 
 function novoItem(){if(!can('edit'))return toast('Sem permissão.','err');openModal('📦 Novo Item',itemForm())}
 function editItem(id){
+  console.log('editItem chamado com id:', id);
   if(!can('edit'))return toast('Sem permissão.','err');
   const i=item(id);
+  console.log('Item encontrado:', i);
   if(i){
     openModal('✏️ Editar Item',itemForm(i));
   } else {
@@ -914,7 +941,7 @@ function renderRelatorios(){
   const list=dbp.entregas.filter(e=>e.data>=ini&&e.data<=fim).sort((a,b)=>sid(b.data).localeCompare(sid(a.data)));
   $('#repBody').innerHTML=list.map(e=>{const f=fam(e.familiaId),i=item(e.itemId);return '<tr><td>'+fmtD(e.data)+'</td><td>'+esc(f?f.responsavel:'—')+'</td><td>'+esc(f?f.bairro:'')+'</td><td>'+esc(i?i.nome:'—')+'</td><td>'+e.quantidade+'</td><td>'+esc(e.entreguePor)+'</td></tr>'}).join('')||'<tr><td colspan=6 class="empty">Nenhuma entrega no período.</td></tr>'; 
   
-  // 📊 Gráfico de Itens Entregues por Mês
+  // Gráfico de Itens Entregues por Mês
   const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const qtds = meses.map((_,i) => {
     const mes = String(i+1).padStart(2,'0');
