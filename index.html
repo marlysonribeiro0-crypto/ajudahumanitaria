@@ -261,6 +261,39 @@ label{display:block;font-size:10.5px;font-weight:700;color:#475569;margin:8px 0 
   .modal{border-radius:12px 12px 0 0;max-height:92vh;overflow-y:auto}
   .tscroll{overflow-x:auto}
 }
+
+/* ═══ CELULAR: TABELAS EM CARDS + ALVOS DE TOQUE MAIORES + FAB ═══ */
+@media(max-width:640px){
+  .content{padding:10px 8px 90px}
+  .toolbar{flex-wrap:wrap}
+  .toolbar .inp{flex:1 1 100%}
+  .toolbar .btn{flex:1 1 auto;justify-content:center}
+
+  /* tabelas -> cartões empilhados, sem rolagem lateral */
+  .tscroll{overflow-x:visible}
+  .tbl.cardable thead{display:none}
+  .tbl.cardable, .tbl.cardable tbody{display:block;width:100%}
+  .tbl.cardable tr{display:flex;flex-direction:column;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:11px 13px;margin-bottom:10px;box-shadow:var(--shadow)}
+  .tbl.cardable td{display:flex;justify-content:space-between;align-items:center;gap:10px;border:0;padding:5px 0;font-size:12.5px}
+  .tbl.cardable td[data-label]::before{content:attr(data-label);font-size:9.5px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;flex:none}
+  .tbl.cardable td.hide-mobile{display:none}
+  .tbl.cardable td.card-title{order:-2;font-size:14.5px;padding:0 0 8px;border-bottom:1px dashed #eef2f7;margin-bottom:5px}
+  .tbl.cardable td.card-title::before{content:none}
+  .tbl.cardable td.card-title b{font-size:14.5px}
+  .tbl.cardable td.acts{order:99;justify-content:flex-end;gap:6px;border-top:1px dashed #eef2f7;margin-top:6px;padding-top:9px}
+  .tbl.cardable td:empty{display:none}
+
+  /* alvos de toque maiores (mín. 40px, padrão de acessibilidade mobile) */
+  .ib{width:38px;height:38px;font-size:14px}
+  .btn{padding:11px 16px;font-size:13px}
+  .m-x{width:34px;height:34px}
+
+  /* botão de ação flutuante */
+  .fab{position:fixed;right:18px;bottom:22px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:0;box-shadow:0 10px 26px rgba(29,78,216,.45);font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:60;transition:.15s}
+  .fab:active{transform:scale(.93)}
+  .fab.hidden{display:none}
+}
+@media(min-width:641px){ .fab{display:none} }
 </style>
 </head>
 <body>
@@ -329,8 +362,8 @@ label{display:block;font-size:10.5px;font-weight:700;color:#475569;margin:8px 0 
     </header>
     <main class="content">
       <section id="page-dashboard" class="page active"><div id="dashWrap"></div></section>
-      <section id="page-familias" class="page"><div class="card"><div class="toolbar"><button class="btn btn-p" data-need="edit" onclick="novaFamilia()">+ Nova Família</button><input id="famQ" class="inp" placeholder="🔍 Buscar…" oninput="flt.fam.q=this.value;renderFamilias()"><select id="famStatus" class="inp" onchange="flt.fam.status=this.value;renderFamilias()"><option>Todos</option><option>Ativo</option><option>Inativo</option></select><select id="famBairro" class="inp" onchange="flt.fam.bairro=this.value;renderFamilias()"><option>Todos</option></select><button class="btn btn-g" data-need="export" onclick="exportarFamilias()">⬇ CSV</button></div><div class="tscroll"><table class="tbl"><thead><tr><th>#</th><th>Responsável</th><th>CPF</th><th>NIS</th><th>Membros</th><th>Bairro</th><th>Entregas</th><th>Status</th><th>Ações</th></tr></thead><tbody id="famBody"></tbody></table></div><div class="tfoot" id="famCount"></div></div></section>
-      <section id="page-membros" class="page"><div class="card"><div class="toolbar"><button class="btn btn-p" data-need="edit" onclick="novoMembro()">+ Novo Membro</button><input id="memQ" class="inp" placeholder="🔍 Buscar…" oninput="flt.mem.q=this.value;renderMembros()"><select id="memFam" class="inp" onchange="flt.mem.fam=this.value;renderMembros()"><option value="Todas">Todas</option></select><select id="memTipo" class="inp" onchange="flt.mem.tipo=this.value;renderMembros()"><option>Todos</option><option>Responsável</option><option>Dependente</option></select><select id="memGen" class="inp" onchange="flt.mem.gen=this.value;renderMembros()"><option>Todos</option><option>Masculino</option><option>Feminino</option></select><button class="btn btn-g" data-need="export" onclick="exportarMembros()">⬇ CSV</button></div><div class="tscroll"><table class="tbl"><thead><tr><th>Nome</th><th>CPF</th><th>Nascimento</th><th>Idade</th><th>Tipo</th><th>Família</th><th>Ações</th></tr></thead><tbody id="memBody"></tbody></table></div><div class="tfoot" id="memCount"></div></div></section>
+      <section id="page-familias" class="page"><div class="card"><div class="toolbar"><button class="btn btn-p" data-need="edit" onclick="novaFamilia()">+ Nova Família</button><input id="famQ" class="inp" placeholder="🔍 Buscar…" oninput="flt.fam.q=this.value;renderFamilias()"><select id="famStatus" class="inp" onchange="flt.fam.status=this.value;renderFamilias()"><option>Todos</option><option>Ativo</option><option>Inativo</option></select><select id="famBairro" class="inp" onchange="flt.fam.bairro=this.value;renderFamilias()"><option>Todos</option></select><button class="btn btn-g" data-need="export" onclick="exportarFamilias()">⬇ CSV</button></div><div class="tscroll"><table class="tbl cardable"><thead><tr><th>#</th><th>Responsável</th><th>CPF</th><th>NIS</th><th>Membros</th><th>Bairro</th><th>Entregas</th><th>Status</th><th>Ações</th></tr></thead><tbody id="famBody"></tbody></table></div><div class="tfoot" id="famCount"></div></div></section>
+      <section id="page-membros" class="page"><div class="card"><div class="toolbar"><button class="btn btn-p" data-need="edit" onclick="novoMembro()">+ Novo Membro</button><input id="memQ" class="inp" placeholder="🔍 Buscar…" oninput="flt.mem.q=this.value;renderMembros()"><select id="memFam" class="inp" onchange="flt.mem.fam=this.value;renderMembros()"><option value="Todas">Todas</option></select><select id="memTipo" class="inp" onchange="flt.mem.tipo=this.value;renderMembros()"><option>Todos</option><option>Responsável</option><option>Dependente</option></select><select id="memGen" class="inp" onchange="flt.mem.gen=this.value;renderMembros()"><option>Todos</option><option>Masculino</option><option>Feminino</option></select><button class="btn btn-g" data-need="export" onclick="exportarMembros()">⬇ CSV</button></div><div class="tscroll"><table class="tbl cardable"><thead><tr><th>Nome</th><th>CPF</th><th>Nascimento</th><th>Idade</th><th>Tipo</th><th>Família</th><th>Ações</th></tr></thead><tbody id="memBody"></tbody></table></div><div class="tfoot" id="memCount"></div></div></section>
       
       <section id="page-itens" class="page">
         <div class="stats" id="itemStats"></div>
@@ -343,7 +376,7 @@ label{display:block;font-size:10.5px;font-weight:700;color:#475569;margin:8px 0 
             <button class="btn btn-g" data-need="export" onclick="exportarItens()">⬇ CSV</button>
           </div>
           <div class="tscroll">
-            <table class="tbl">
+            <table class="tbl cardable">
               <thead><tr><th>Item</th><th>Categoria</th><th>Valor Unit.</th><th>Qtd</th><th>Status</th><th>Ações</th></tr></thead>
               <tbody id="itBody"></tbody>
             </table>
@@ -375,7 +408,7 @@ label{display:block;font-size:10.5px;font-weight:700;color:#475569;margin:8px 0 
               <button class="btn btn-g" data-need="export" onclick="exportarEntregas()">⬇ CSV</button>
             </div>
             <div class="tscroll">
-              <table class="tbl">
+              <table class="tbl cardable">
                 <thead><tr><th>Data</th><th>Família</th><th>Item</th><th>Qtd</th><th>Entregue por</th><th>Ações</th></tr></thead>
                 <tbody id="entBody"></tbody>
               </table>
@@ -413,6 +446,7 @@ label{display:block;font-size:10.5px;font-weight:700;color:#475569;margin:8px 0 
     <div class="m-body" id="mBody"></div>
   </div>
 </div>
+<button id="fab" class="fab hidden" onclick="fabAction()">+</button>
 <div id="toasts"></div>
 
 <script type="module">
@@ -599,9 +633,12 @@ function subscribeMeta(){
 const PAGES={dashboard:{t:'Dashboard',r:renderDashboard},familias:{t:'Famílias',r:renderFamilias},membros:{t:'Membros',r:renderMembros},itens:{t:'Itens / Estoque',r:renderItens},entregas:{t:'Entregas',r:renderEntregas},relatorios:{t:'Relatórios',r:renderRelatorios},auditoria:{t:'Auditoria',r:renderAuditoria},usuarios:{t:'Usuários',r:renderUsuarios}};
 function showPage(p){ if((p==='usuarios'&&!can('users'))||(p==='auditoria'&&!can('audit')))p='dashboard'; curPage=p;
   $$('.page').forEach(s=>s.classList.toggle('active',s.id==='page-'+p)); $$('.nav a').forEach(a=>a.classList.toggle('active',a.dataset.page===p));
-  $('#pageTitle').textContent=PAGES[p].t; PAGES[p].r(); closeSidebar(); 
+  $('#pageTitle').textContent=PAGES[p].t; PAGES[p].r(); closeSidebar(); updateFab(p);
   history.pushState(null, '', window.location.href);
 }
+const FAB_CFG={ familias:{ic:'+',need:'edit',fn:'novaFamilia'}, itens:{ic:'+',need:'edit',fn:'abrirFormItem'}, membros:{ic:'+',need:'edit',fn:'novoMembro'}, entregas:{ic:'📦',need:'deliver',fn:()=>{const el=document.getElementById('entFamilia'); if(el){ if(el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'center'}); el.focus(); } }} };
+function updateFab(p){ const fab=$('#fab'); if(!fab)return; const cfg=FAB_CFG[p]; if(!cfg||(cfg.need&&!can(cfg.need))){ fab.classList.add('hidden'); return; } fab.textContent=cfg.ic; fab.classList.remove('hidden'); }
+function fabAction(){ const cfg=FAB_CFG[curPage]; if(!cfg)return; if(typeof cfg.fn==='function') cfg.fn(); else window[cfg.fn](); }
 function toggleSidebar(){$('#sidebar').classList.toggle('open');$('#backdrop').classList.toggle('show')}
 function closeSidebar(){$('#sidebar').classList.remove('open');$('#backdrop').classList.remove('show')}
 
@@ -902,11 +939,11 @@ function renderItens(){
   $('#itBody').innerHTML=list.map(i=>{
     const st=itemStatus(i); 
     return `<tr id="row-${i.id}">
-      <td><b>${esc(i.nome)}</b><div class="hint">${esc(i.descricao||'')}</div></td>
-      <td><span class="badge b-gray">${esc(i.categoria)}</span></td>
-      <td>${money(i.valor)}</td>
-      <td>${i.quantidade==0?'<span class="zero">0</span>':i.quantidade}${i.quantidade<=LIMITE_BAIXO?'<span class="low">baixo</span>':''}</td>
-      <td>${statusBadge(st)}</td>
+      <td data-label="Item"><b>${esc(i.nome)}</b><div class="hint">${esc(i.descricao||'')}</div></td>
+      <td data-label="Categoria"><span class="badge b-gray">${esc(i.categoria)}</span></td>
+      <td data-label="Valor Unit.">${money(i.valor)}</td>
+      <td data-label="Qtd.">${i.quantidade==0?'<span class="zero">0</span>':i.quantidade}${i.quantidade<=LIMITE_BAIXO?'<span class="low">baixo</span>':''}</td>
+      <td data-label="Status">${statusBadge(st)}</td>
       <td class="acts">
         <button class="ib" title="Editar Item" onclick="editarItem('${i.id}')">✏️</button>
         <button class="ib del" title="Excluir Item" onclick="excluirItem('${i.id}')">🗑</button>
@@ -1001,7 +1038,7 @@ function renderFamilias(){
   $('#famBody').innerHTML=list.map(f=>{
     const nM=dbp.membros.filter(m=>m.familiaId===f.id).length;
     const nE=dbp.entregas.filter(e=>e.familiaId===f.id).length;
-    return `<tr><td>${esc(f.id.slice(-6))}</td><td><b>${esc(f.responsavel)}</b></td><td>${esc(f.cpf||'—')}</td><td>${esc(f.nis||'—')}</td><td>${nM}</td><td>${esc(f.bairro)}</td><td>${nE}</td><td>${statusBadge(f.status)}</td><td class="acts">
+    return `<tr><td class="hide-mobile" data-label="#">${esc(f.id.slice(-6))}</td><td class="card-title" data-label="Responsável"><b>${esc(f.responsavel)}</b></td><td data-label="CPF">${esc(f.cpf||'—')}</td><td data-label="NIS">${esc(f.nis||'—')}</td><td data-label="Membros">${nM}</td><td data-label="Bairro">${esc(f.bairro)}</td><td data-label="Entregas">${nE}</td><td data-label="Status">${statusBadge(f.status)}</td><td class="acts">
       <button class="ib" title="Ver" onclick="viewFamilia('${f.id}')">👁</button>
       ${can('deliver')?`<button class="ib" title="Entrega" onclick="gotoEntrega('${f.id}')">📦</button>`:''}
       ${can('edit')?`<button class="ib" title="Editar" onclick="editFamilia('${f.id}')">✏️</button>`:''}
@@ -1038,7 +1075,7 @@ function delFamilia(id){ if(!can('delete'))return toast('Sem permissão.','err')
 function gotoEntrega(fid){showPage('entregas');$('#entFamilia').value=fid;entFamiliaChange()}
 
 // ═══ MEMBROS ═══
-function renderMembros(){ const fs=[...dbp.familias].sort((a,b)=>a.responsavel.localeCompare(b.responsavel)); $('#memFam').innerHTML='<option value="Todas">Todas as famílias</option>'+fs.map(f=>'<option value="'+f.id+'" '+(f.id===flt.mem.fam?'selected':'')+'>'+esc(f.responsavel)+'</option>').join(''); const q=norm(flt.mem.q); const list=dbp.membros.filter(m=>{if(q&&!norm(m.nome+' '+(m.cpf||'')).includes(q))return false;if(flt.mem.fam!=='Todas'&&m.familiaId!==flt.mem.fam)return false;if(flt.mem.tipo!=='Todos'&&m.tipo!==flt.mem.tipo)return false;if(flt.mem.gen!=='Todos'&&m.genero!==flt.mem.gen)return false;return true;}); $('#memBody').innerHTML=list.map(m=>{const f=fam(m.familiaId); return '<tr><td><b>'+esc(m.nome)+'</b></td><td>'+esc(m.cpf||'—')+'</td><td>'+fmtD(m.nascimento)+'</td><td>'+idade(m.nascimento)+'</td><td><span class="badge '+(m.tipo==='Responsável'?'b-blue':'b-gray')+'">'+m.tipo+'</span></td><td>'+esc(f?f.responsavel:'—')+'</td><td class="acts">'+(can('edit')?'<button class="ib" title="Editar" onclick="editMembro(\''+m.id+'\')">✏️</button>':'')+(can('delete')?'<button class="ib del" title="Excluir" onclick="delMembro(\''+m.id+'\')">🗑</button>':'')+'</td></tr>'; }).join('')||'<tr><td colspan=7 class="empty">Nenhum membro.</td></tr>'; $('#memCount').textContent=list.length+' exibido(s) · '+dbp.membros.length+' cadastrado(s)'; }
+function renderMembros(){ const fs=[...dbp.familias].sort((a,b)=>a.responsavel.localeCompare(b.responsavel)); $('#memFam').innerHTML='<option value="Todas">Todas as famílias</option>'+fs.map(f=>'<option value="'+f.id+'" '+(f.id===flt.mem.fam?'selected':'')+'>'+esc(f.responsavel)+'</option>').join(''); const q=norm(flt.mem.q); const list=dbp.membros.filter(m=>{if(q&&!norm(m.nome+' '+(m.cpf||'')).includes(q))return false;if(flt.mem.fam!=='Todas'&&m.familiaId!==flt.mem.fam)return false;if(flt.mem.tipo!=='Todos'&&m.tipo!==flt.mem.tipo)return false;if(flt.mem.gen!=='Todos'&&m.genero!==flt.mem.gen)return false;return true;}); $('#memBody').innerHTML=list.map(m=>{const f=fam(m.familiaId); return '<tr><td class="card-title" data-label="Nome"><b>'+esc(m.nome)+'</b></td><td data-label="CPF">'+esc(m.cpf||'—')+'</td><td data-label="Nascimento">'+fmtD(m.nascimento)+'</td><td data-label="Idade">'+idade(m.nascimento)+'</td><td data-label="Tipo"><span class="badge '+(m.tipo==='Responsável'?'b-blue':'b-gray')+'">'+m.tipo+'</span></td><td data-label="Família">'+esc(f?f.responsavel:'—')+'</td><td class="acts">'+(can('edit')?'<button class="ib" title="Editar" onclick="editMembro(\''+m.id+'\')">✏️</button>':'')+(can('delete')?'<button class="ib del" title="Excluir" onclick="delMembro(\''+m.id+'\')">🗑</button>':'')+'</td></tr>'; }).join('')||'<tr><td colspan=7 class="empty">Nenhum membro.</td></tr>'; $('#memCount').textContent=list.length+' exibido(s) · '+dbp.membros.length+' cadastrado(s)'; }
 function novoMembro(){if(!can('edit'))return toast('Sem permissão.','err');openModal('👤 Novo Membro',membroForm({}))}
 function editMembro(id){if(!can('edit'))return toast('Sem permissão.','err');const m=dbp.membros.find(x=>x.id===id);if(m)openModal('✏️ Editar Membro',membroForm(m))}
 function membroForm(m){ m=m||{}; const fs=[...dbp.familias].sort((a,b)=>a.responsavel.localeCompare(b.responsavel)); return '<div class="fgrid"><div class="span2"><label>Nome *</label><input id="mf_nome" class="inp" value="'+esc(m.nome||'')+'"></div><div><label>CPF</label><input id="mf_cpf" class="inp" data-mask="cpf" value="'+esc(m.cpf||'')+'"></div><div><label>Nascimento</label><input id="mf_nasc" type="date" class="inp" value="'+(m.nascimento||'')+'"></div><div><label>Tipo</label><select id="mf_tipo" class="inp"><option '+(m.tipo!=='Responsável'?'selected':'')+'>Dependente</option><option '+(m.tipo==='Responsável'?'selected':'')+'>Responsável</option></select></div><div><label>Gênero</label><select id="mf_gen" class="inp"><option value="">--</option><option '+(m.genero==='Masculino'?'selected':'')+'>Masculino</option><option '+(m.genero==='Feminino'?'selected':'')+'>Feminino</option></select></div><div class="span2"><label>Família *</label><select id="mf_fam" class="inp">'+fs.map(f=>'<option value="'+f.id+'" '+(f.id===m.familiaId?'selected':'')+'>'+esc(f.responsavel)+' — '+esc(f.bairro)+'</option>').join('')+'</select></div></div><div class="m-foot"><button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveMembro(\''+(m.id||0)+'\')">💾 Salvar</button></div>'; }
@@ -1066,11 +1103,11 @@ function renderEntregas(){
   $('#entBody').innerHTML=list.map(e=>{
     const f=fam(e.familiaId),i=item(e.itemId); 
     return `<tr>
-      <td>${fmtD(e.data)}</td>
-      <td><b>${esc(f?f.responsavel:'—')}</b><div class="hint">${esc(f?f.bairro:'')}</div></td>
-      <td>${esc(i?i.nome:'—')}</td>
-      <td>${e.quantidade}</td>
-      <td>${esc(e.entreguePor)}</td>
+      <td data-label="Data">${fmtD(e.data)}</td>
+      <td class="card-title" data-label="Família"><b>${esc(f?f.responsavel:'—')}</b><div class="hint">${esc(f?f.bairro:'')}</div></td>
+      <td data-label="Item">${esc(i?i.nome:'—')}</td>
+      <td data-label="Qtd.">${e.quantidade}</td>
+      <td data-label="Entregue por">${esc(e.entreguePor)}</td>
       <td class="acts">
         <button class="ib" title="Recibo" onclick="reciboEntrega('${e.id}')">🖨</button>
         <button class="ib" title="Ficha Completa" onclick="gerarFichaCompleta('${e.familiaId}')">📄</button>
@@ -1128,7 +1165,7 @@ Object.assign(window, {
   abrirFormItem, editarItem, excluirItem, salvarItem, renderItens, exportarItens,
   entFamiliaChange, entItemChange, registrarEntrega, editEntrega, delEntrega, saveEntrega, reciboEntrega, renderEntregas, exportarEntregas,
   repPorFamilia, repPorPeriodo, exportarPeriodo, renderAuditoria, exportarLogs, limparLogs,
-  renderDashSearch, dashSearchEnter, dashSearchVerTodas,
+  renderDashSearch, dashSearchEnter, dashSearchVerTodas, fabAction,
   abrirFormUsuario, editUsuario, delUsuario, saveUsuario, renderUsuarios,
   gerarFichaPDF, gerarFichaCompleta, gerarReciboEntrega, flt
 });
